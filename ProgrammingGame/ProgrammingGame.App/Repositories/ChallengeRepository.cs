@@ -20,6 +20,11 @@ namespace ProgrammingGame.App.Repositories
             _context.Entries.Add(new Entry { ParticipantName = entry.ParticipantName, SolutionCode = entry.Solution, Task = task, IsSolved = result.Output == task.Solution, Time = result.Time });
         }
 
+        public IEnumerable<Entry> GetEntries()
+        {
+            return _context.Entries;
+        }
+
         public Task GetTask(int taskId)
         {
             return _context.Tasks.Single(t => t.TaskId == taskId);

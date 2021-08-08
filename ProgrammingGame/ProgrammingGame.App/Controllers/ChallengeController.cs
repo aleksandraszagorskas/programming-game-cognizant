@@ -24,26 +24,6 @@ namespace ProgrammingGame.App.Controllers
             _repo = repo;
         }
 
-        private static readonly string[] Summaries = new[]
-                {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        [HttpGet]
-        public IActionResult Get()
-        {
-            var rng = new Random();
-            var items = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
-
-            return Ok(items);
-        }
-
         [HttpPost]
         [Route("submitTask")]
         public async Task<IActionResult> SubmitTask([FromBody] EntryDto entry)
@@ -57,7 +37,6 @@ namespace ProgrammingGame.App.Controllers
             return Ok(new
             {
                 isSolved = result.Output == task.Solution,
-                time = result.Time,
                 participantName = entry.ParticipantName
             });
         }
@@ -69,6 +48,20 @@ namespace ProgrammingGame.App.Controllers
             var tasks = _repo
                 .GetTasks()
                 .Select(t => new TaskDto { TaskId = t.TaskId, Name = t.Name, Description = t.Description });
+
+            return Ok(tasks);
+        }
+
+        [HttpGet]
+        [Route("rankings")]
+        public IActionResult GetSolvedEntries()
+        {
+            var tasks = _repo
+                .GetEntries()
+                .Where(e => e.IsSolved)
+                .OrderBy(e => e.Time)
+                .Take(3)
+                .Select(e => new EntryRankingDto { EntryId = e.EntryId, ParticipantName = e.ParticipantName, Time = e.Time } );
 
             return Ok(tasks);
         }

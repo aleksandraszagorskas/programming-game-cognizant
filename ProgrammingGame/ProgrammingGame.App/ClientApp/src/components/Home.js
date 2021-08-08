@@ -33,7 +33,7 @@ export class Home extends Component {
     handleSubmit = async (event) => {
         event.preventDefault();
 
-        let data = {
+        let requestData = {
             ParticipantName: this.state.participantName,
             Solution: this.state.solution,
             TaskId: this.state.selectedTaskId
@@ -41,11 +41,18 @@ export class Home extends Component {
 
         const response = await fetch('challenge/submitTask', {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify(requestData),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
+
+        const responseData = await response.json();
+        if (responseData.isSolved) {
+            alert('Congratulations, ' + responseData.participantName + '! You have succesfully solved this task. Check out Top 3 to see if you have made it to the top!');
+        } else {
+            alert('Unfortunately your solution is not correct. Don\'t give up improve your code and try again!');
+        }
     }
 
     getSelectedTask = () => {

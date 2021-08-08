@@ -10,5 +10,6 @@ namespace ProgrammingGame.App.Repositories
         Task GetTask(int taskId);
         void AddEntry(EntryDto entry, TaskSubmitResultDto result);
         void Save();
+        IEnumerable<Entry> GetEntries();
     }
 }
