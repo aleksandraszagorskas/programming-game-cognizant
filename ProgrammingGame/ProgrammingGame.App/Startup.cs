@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProgrammingGame.App.Models;
+using ProgrammingGame.App.Repositories;
+using ProgrammingGame.App.Services;
 
 namespace ProgrammingGame.App
 {
@@ -21,7 +23,12 @@ namespace ProgrammingGame.App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EntryContext>(opts => opts.UseSqlServer(Configuration.GetConnectionString("ProgrammingGameDB")));
+            services.AddScoped<IChallengeService, ChallengeService>();
+            services.AddScoped<IChallengeRepository, ChallengeRepository>();
+
+            services.AddDbContext<EntryContext>(opts => 
+                opts
+                .UseSqlServer(Configuration.GetConnectionString("ProgrammingGameDB")));
             services.AddControllersWithViews();
 
             // In production, the React files will be served from this directory

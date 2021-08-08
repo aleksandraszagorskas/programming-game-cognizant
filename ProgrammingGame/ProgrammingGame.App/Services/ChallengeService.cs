@@ -1,35 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Newtonsoft.Json.Linq;
+using ProgrammingGame.App.DTO;
+using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
 namespace ProgrammingGame.App.Services
 {
-    public class ChallengeService
+    public class ChallengeService : IChallengeService
     {
-        public ChallengeService()
-        {
-
-        }
-
-        public async Task<HttpResponseMessage> SubmitTask()
+        public async Task<TaskSubmitResultDto> SubmitTaskAsync(string scriptString)
         {
             var clientId = "99c27a137808f59397fce5d86177495a";
             var clientSecret = "34ebdb23968d053efac301b6934d07ca98b0fa871a0388bf7a39a59fccc2759e";
-            var script = @"
-                using System;
-                class Program
-                {
-                    static void Main(string[] args) {
-                        //Your code goes here
-                        Console.WriteLine(""Hello World!"");
-                    }
-                }
-            ";
             var language = "csharp";
             var versionIndex = "0";
 
@@ -40,7 +24,7 @@ namespace ProgrammingGame.App.Services
                     var input = @$"{{
                         ""clientId"": ""{clientId}"", 
                         ""clientSecret"": ""{clientSecret}"",
-                        ""script"": ""{HttpUtility.JavaScriptStringEncode(script)}"",
+                        ""script"": ""{HttpUtility.JavaScriptStringEncode(scriptString)}"",
                         ""language"": ""{language}"",
                         ""versionIndex"": ""{versionIndex}"" 
                     }}";
@@ -48,7 +32,7 @@ namespace ProgrammingGame.App.Services
                     var content = new StringContent(input, Encoding.UTF8, "application/json");
                     var response = await client.PostAsync("https://api.jdoodle.com/v1/execute", content);
 
-                    return response;
+                    return await ParseResponse(response);
                 }
             }
             catch (Exception e)
@@ -57,5 +41,15 @@ namespace ProgrammingGame.App.Services
             }
         }
 
+        private async Task<TaskSubmitResultDto> ParseResponse(HttpResponseMessage response)
+        {
+            var result = await response.Content.ReadAsStringAsync();
+            dynamic jobj = JObject.Parse(result);
+
+            var output = ((string)jobj.output)?.Replace("\n", "").Replace("\r", "");
+            var time = ((string)jobj.cpuTime)?.Replace("\n", "").Replace("\r", "");
+
+            return new TaskSubmitResultDto { Output = output, Time = time };
+        }
     }
 }

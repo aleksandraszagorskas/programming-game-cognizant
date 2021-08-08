@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgrammingGame.App.Models;
 
 namespace ProgrammingGame.App.Migrations
 {
     [DbContext(typeof(EntryContext))]
-    partial class EntryContextModelSnapshot : ModelSnapshot
+    [Migration("20210808144610_ProgrammingGame.App.Models.AddTaskProperties")]
+    partial class ProgrammingGameAppModelsAddTaskProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +28,6 @@ namespace ProgrammingGame.App.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("IsSolved")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ParticipantName")
                         .HasColumnType("nvarchar(max)");
 
@@ -37,9 +36,6 @@ namespace ProgrammingGame.App.Migrations
 
                     b.Property<int?>("TaskId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Time")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EntryId");
 
@@ -66,7 +62,7 @@ namespace ProgrammingGame.App.Migrations
 
                     b.HasKey("TaskId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Task");
 
                     b.HasData(
                         new
