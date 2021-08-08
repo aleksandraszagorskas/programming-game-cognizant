@@ -15,7 +15,7 @@ namespace ProgrammingGame.Test.Services
         }
 
         [Test]
-        public async Task SubmitTask_ValidData_()
+        public async Task SubmitTask_ValidData_ReturnsTaskSubmitResult()
         {
             //Arrange
             var solution = "Hello World!";
@@ -36,6 +36,30 @@ namespace ProgrammingGame.Test.Services
             //Assert
             Assert.NotNull(result);
             Assert.AreEqual(solution, result.Output);
+        }
+
+        [Test]
+        public async Task SubmitTask_InvalidData_ReturnsTaskSubmitResult()
+        {
+            //Arrange
+            var solution = "Hello World!";
+            var scriptString = @$"
+                using System;
+                class Program
+                {{
+                    static void Main(string[] args) {{
+                        //Your code goes here
+                        ConsoleZ.WriteLine(""{solution}""); //typo here
+                    }}
+                }}
+            ";
+
+            //Act
+            var result = await _service.SubmitTaskAsync(scriptString);
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.AreNotEqual(solution, result.Output);
         }
     }
 }
